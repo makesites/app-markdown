@@ -15,7 +15,7 @@ var FILE_ENCODING = 'utf-8',
 
 // Dependencies
 var cli = require('commander'),
-	uglify = require("uglify-js"),
+	terser = require("terser"),
 	jshint = require('jshint'),
 	handlebars = require('hbs'),
 	fs = require('fs'),
@@ -38,19 +38,28 @@ var package = JSON.parse( fs.readFileSync('bower.json', FILE_ENCODING) ); // con
 var name = package.name;
 // - list files in the lib folder
 var src = libFiles();
+// - concatinate all files
+var src = [
+	// third-party helpers
+	//'deps/...',
+	// main lib
+	'lib/helpers.js',
+	'lib/template.js',
+	'lib/view.js'
+];
 
 // - concatinate all files
 concat({
 	src: src,
-	dest: 'build/'+ name +'.js'
+	dest: 'dist/'+ name +'.js'
 });
 
 
 // - Validate js
-lint('build/'+ name +'.js', function(){
+lint('dist/'+ name +'.js', function(){
 
 	// - Create / save minified file
-	minify('build/'+ name +'.js', 'build/'+ name +'-min.js');
+	minify('dist/'+ name +'.js', 'dist/'+ name +'.min.js');
 
 });
 
@@ -82,26 +91,37 @@ function concat(opts) {
 
 
 function minify(srcPath, distPath) {
-	/*
-	var
-	  jsp = uglyfyJS.parser,
-	  pro = uglyfyJS.uglify,
-	  ast = jsp.parse( fs.readFileSync(srcPath, FILE_ENCODING) );
 
-	ast = pro.ast_mangle(ast);
-	ast = pro.ast_squeeze(ast);
-	*/
+	var source = fs.readFileSync(srcPath, FILE_ENCODING);
 
-	var min = uglify.minify(srcPath, { compressor: {
-		comments : /@name|@author|@cc_on|@url|@license/
-	} });
+	terser.minify(source, {
+		mangle: true,
+		output: {
+			comments : /@name|@author|@cc_on|@url|@license/
+		},
+		//sourceMap: {
+		//	filename: "dist/app.min.js.map",
+		//	url: "app.min.js.map"
+		//},
+		//ecma: 8,
+		//compress: false
+	}).then(function(result){
 
-	// gzip
-	zlib.gzip(min.code, function (error, result) {
-		if (error) throw error;
-		fs.writeFileSync(distPath, result, FILE_ENCODING);
+		fs.writeFileSync(distPath, result.code, FILE_ENCODING);
+
+
 		console.log(' '+ distPath +' built.');
+
+		// disable gzip
+		return;
+
+		// gzip
+		zlib.gzip(result.code, function (error, bytes) {
+			if (error) throw error;
+			fs.writeFileSync(distPath, bytes, FILE_ENCODING);
+		});
 	});
+
 
 }
 
@@ -110,7 +130,7 @@ function lint(path, callback) {
 	// remove Byte Order Mark
 	buf = buf.replace(/^\uFEFF/, '');
 
-	jshint.JSHINT(buf);
+	jshint.JSHINT(buf, { esversion: 11, evil: true });
 
 	var nErrors = jshint.JSHINT.errors.length;
 
