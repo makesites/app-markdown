@@ -2,7 +2,7 @@
  * @name app.markdown
  * An APP() extension to parse and display Markdown pages as views
  *
- * Version: 0.0.0 (Thu, 19 Dec 2024 07:23:49 GMT)
+ * Version: 0.1.0 (Thu, 19 Dec 2024 07:26:20 GMT)
  * Source: http://github.com/makesites/app-markdown
  *
  * @author makesites
