@@ -1,19 +1,18 @@
 {
-	"name": "backbone.markdown",
-	"version": "0.3.6",
-	"description": "A Backbone.js extension to automatically load Markdown pages as views ",
+	"name": "app.markdown",
+	"version": "0.0.0",
+	"description": "An APP() extension to parse and display Markdown pages as views",
 	"license": "MIT",
 	"author": "makesites",
 	"authors": [
 		{ "name": "Makis Tracend", "email": "makis@makesit.es", "homepage": "http://github.com/tracend" }
 	],
-	"repository" : "http://github.com/makesites/backbone-markdown",
-	"main": ["./build/backbone.markdown-min.js"],
+	"repository": "http://github.com/makesites/app-markdown",
+	"main": ["./build/app.markdown.min.js"],
 	"dependencies": {
-			"backbone": "1.0.0",
-			"jquery": "2.0.3",
-			"underscore": "1.4.4",
-			"backbone.app": "0.9.4",
-			"showdown": "0.3.1"
+		"jquery": "3.7.1",
+		"underscore": "1.12.1",
+		"app": "x.x.x",
+		"showdown": "0.3.1"
 	}
 }
